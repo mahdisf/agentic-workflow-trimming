@@ -2,7 +2,7 @@
 
 An intelligent, agent-based framework for computing equilibrium points (trim conditions) of nonlinear dynamic systems, performing linearization, stability analysis, and constraint validation. This project demonstrates multi-agent collaboration in scientific computing, inspired by modern AI workflows.
 
-**Author**: Mahdi Sarfarazi
+**Author**: Mahdi Sarfarazi  
 **Repository**: https://github.com/mahdisf/agentic-workflow-trimming
 
 ## Features
@@ -139,26 +139,6 @@ agentic-workflow-trimming/
 - **scipy**: Scientific computing (optimization, integration)
 - **matplotlib**: Plotting and visualization
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
 ## License
 
 MIT License - see LICENSE file for details
-
-## Citation
-
-If you use this code in your research, please cite:
-
-```
-@software{agentic_workflow_trimming,
-  title={Agentic Workflow for System Trimming},
-  author={Your Name},
-  year={2024},
-  url={https://github.com/yourusername/agentic-workflow-trimming}
-}
