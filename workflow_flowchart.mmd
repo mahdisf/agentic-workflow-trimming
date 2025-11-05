@@ -1,0 +1,38 @@
+flowchart TD
+    A[🚀 **Start**] --> U[👤 **User Inputs**<br>**System Choice**, Params]
+    U --> B{🤖 **ParserAgent**<br>**Configure System**}
+    B --> C[⚙️ **Config**: System, f, Params, Bounds]
+    C --> D[📋 **PlannerAgent**<br>**Initial Guess** & Strategy]
+    D --> E[🔧 **SolverAgent**<br>**Iterative Solve**]
+    E --> F{✅ **Converged?**}
+    F -->|No| G[❌ **Error**: No Convergence]
+    F -->|Yes| H[📊 **AnalysisAgent**<br>**Linearization** & Stability]
+    H --> I[📄 **Generate JSON Output**]
+    I --> K[📈 **Optional**: Simulate & Plot<br>**User Prompt** for Plot]
+    K --> L[🏁 **End**]
+
+    subgraph **Agents**
+        B
+        D
+        E
+        H
+    end
+
+    subgraph **Tools**
+        T1[solve_equilibrium] --> E
+        T2[compute_jacobian] --> H
+        T3[analyze_stability] --> H
+        T4[validate_constraints] --> H
+    end
+
+    classDef agent fill:#AED6F1,stroke:#3498DB,stroke-width:2px,color:#000
+    classDef tool fill:#ABEBC6,stroke:#27AE60,stroke-width:2px,color:#000
+    classDef startend fill:#FAD7A0,stroke:#D68910,stroke-width:2px,color:#000
+    classDef decision fill:#F1948A,stroke:#C0392B,stroke-width:2px,color:#000
+    classDef user fill:#D7BDE2,stroke:#8E44AD,stroke-width:2px,color:#000
+
+    class A,L startend
+    class F decision
+    class B,D,E,H agent
+    class T1,T2,T3,T4 tool
+    class U user
