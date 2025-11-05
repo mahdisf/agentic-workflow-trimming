@@ -118,36 +118,7 @@ Generate time response plot? (y/n) [default=y]: y
   → Plot saved to results/msd_response.png
 ```
 
-## Workflow Overview
 
-```mermaid
-flowchart TD
-    A[Start] --> U[User Inputs: System Choice, Params]
-    U --> B[ParserAgent: Configure System]
-    B --> C[Config: System, f, Params, Bounds]
-    C --> D[PlannerAgent: Initial Guess & Strategy]
-    D --> E[SolverAgent: Iterative Solve]
-    E --> F{Converged?}
-    F -->|No| G[Error: No Convergence]
-    F -->|Yes| H[AnalysisAgent: Linearization & Stability]
-    H --> I[Generate JSON Output]
-    I --> K[Optional: Simulate & Plot]
-    K --> L[End]
-
-    subgraph Agents
-        B
-        D
-        E
-        H
-    end
-
-    subgraph Tools
-        T1[solve_equilibrium] --> E
-        T2[compute_jacobian] --> H
-        T3[analyze_stability] --> H
-        T4[validate_constraints] --> H
-    end
-```
 
 ## Project Structure
 
