@@ -2,7 +2,7 @@
 
 An intelligent, agent-based framework for computing equilibrium points (trim conditions) of nonlinear dynamic systems, performing linearization, stability analysis, and constraint validation. This project demonstrates multi-agent collaboration in scientific computing, inspired by modern AI workflows.
 
-**Author**: Mahdi Safaei
+**Author**: Mahdi Sarfarazi
 **Repository**: https://github.com/mahdisf/agentic-workflow-trimming
 
 ## Features
