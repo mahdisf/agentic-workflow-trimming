@@ -147,13 +147,25 @@ class PlannerAgent:
         In LLM version, prompt would be: "Given system {system_name} with parameters {params}
         and operating conditions {operating_conditions}, suggest physically reasonable initial guess."
         """
+        # First, try to get custom initial guess function from customized_system.py
+        try:
+            import customized_system
+            if hasattr(customized_system, 'systems') and system_name in customized_system.systems:
+                custom_func = customized_system.systems[system_name].get('initial_guess_func')
+                if custom_func is not None:
+                    return custom_func(operating_conditions, params, n_x, n_u, bounds)
+        except (ImportError, AttributeError, KeyError):
+            # Fall back to built-in logic if custom function not available
+            pass
+
+        # Built-in logic for known systems
         if system_name == 'msd':
             # For mass-spring-damper: x_e = F_e/k, v_e = 0
             desired_u = operating_conditions.get('desired_force', 1.0)
             x_pos = desired_u / params['k']
             initial_guess = np.array([x_pos, 0.0, desired_u])
             strategy = 'minimize'
-            
+
         elif system_name == 'heli':
             # For helicopter hover: all angles and rates zero, voltages balanced
             if operating_conditions.get('mode', 'hover') == 'hover':
@@ -168,7 +180,7 @@ class PlannerAgent:
                 initial_guess = np.array([theta_tilt, 0.0, 0.0, 0.0, V_p_guess, V_y_guess])
             # Always constrain psi (travel angle) to 0.0 to prevent drift
             strategy = 'least_squares'
-            
+
         elif system_name == 'aircraft':
             # For level flight: gamma = 0, so theta = alpha
             V_des = operating_conditions.get('airspeed', 50.0)
@@ -197,7 +209,7 @@ class PlannerAgent:
             strategy = 'least_squares'
         else:
             raise ValueError(f"Unknown system: {system_name}")
-        
+
         # Ensure initial guess is within bounds
         initial_guess = self._clip_to_bounds(initial_guess, bounds, n_x, n_u)
         return initial_guess, strategy
@@ -418,7 +430,7 @@ def solve_equilibrium(system_f, initial_guess, params, n_x, n_u, strategy, bound
             # Use least_squares for better convergence on nonlinear problems
             with warnings.catch_warnings():
                 warnings.simplefilter("default")
-                res = least_squares(eq_func, initial_guess, jac=jac_func,
+                res = least_squares(eq_func, initial_guess, jac='3-point',
                                   bounds=(np.concatenate([x_min, u_min]), np.concatenate([x_max, u_max])),
                                   ftol=tolerance, xtol=tolerance, gtol=tolerance)
 
@@ -435,9 +447,13 @@ def solve_equilibrium(system_f, initial_guess, params, n_x, n_u, strategy, bound
 
             x_e, u_e = sol[0][:n_x], sol[0][n_x:]
             info_dict = sol[1]
-            cost = np.sum(info_dict['fvec']**2)
-            converged = info_dict['info'] in [1, 2, 3, 4] and cost < tolerance
-            message = sol[3]
+            if info_dict is not None and 'fvec' in info_dict:
+                cost = np.sum(info_dict['fvec']**2)
+                converged = info_dict.get('info', 0) in [1, 2, 3, 4] and cost < tolerance
+            else:
+                cost = np.inf
+                converged = False
+            message = sol[3] if len(sol) > 3 else "No message"
 
         else:
             raise ValueError(f"Unknown strategy: {strategy}")
@@ -657,11 +673,43 @@ class ParserAgent:
         print("1. Mass-Spring-Damper (1-DOF)")
         print("2. 2-DOF Helicopter")
         print("3. Aircraft Longitudinal Dynamics")
+        print("4. Other (from customized_system.py)")
         print()
 
-        choice = input("Select system (1-3): ").strip()
+        choice = input("Select system (1-4): ").strip()
 
-        if choice not in self.systems:
+        if choice == '4':
+            # Load from customized_system.py
+            try:
+                import customized_system
+                available_systems = customized_system.get_available_systems()
+                if not available_systems:
+                    print("No custom systems available. Defaulting to Mass-Spring-Damper.")
+                    choice = '1'
+                else:
+                    print("\nAvailable Custom Systems:")
+                    for i, sys_name in enumerate(available_systems, 1):
+                        print(f"{i}. {sys_name}")
+                    sub_choice = input(f"Select custom system (1-{len(available_systems)}): ").strip()
+                    try:
+                        idx = int(sub_choice) - 1
+                        if 0 <= idx < len(available_systems):
+                            system_name = available_systems[idx]
+                            config = customized_system.get_system_config(system_name)
+                            # Add system_name to config for compatibility
+                            config['system_name'] = system_name
+                            return config
+                        else:
+                            print("Invalid choice. Defaulting to Mass-Spring-Damper.")
+                            choice = '1'
+                    except ValueError:
+                        print("Invalid choice. Defaulting to Mass-Spring-Damper.")
+                        choice = '1'
+            except ImportError:
+                print("Customized systems not available. Defaulting to Mass-Spring-Damper.")
+                choice = '1'
+
+        if choice not in self.systems or choice == '4':
             print("Invalid choice. Defaulting to Mass-Spring-Damper.")
             choice = '1'
 

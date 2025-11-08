@@ -8,10 +8,9 @@ An intelligent, agent-based framework for computing equilibrium points (trim con
 ## Features
 
 - **Multi-Agent Architecture**: Planner, Solver, and Analysis agents work collaboratively
-- **System Support**:
-  - Mass-Spring-Damper (1-DOF)
-  - 2-DOF Helicopter
-  - Aircraft Longitudinal Dynamics
+- **Extensible System Support**:
+  - Built-in systems: Mass-Spring-Damper (1-DOF), 2-DOF Helicopter, Aircraft Longitudinal Dynamics
+  - **Custom Systems**: Easily add new systems by editing `customized_system.py` only
 - **Comprehensive Analysis**:
   - Equilibrium point computation
   - Linearization via numerical Jacobian
@@ -42,14 +41,27 @@ python agentic_workfollow.py
 
 The program will prompt you to select a system and configure parameters:
 
-1. **System Selection**: Choose from MSD, Helicopter, or Aircraft
+1. **System Selection**:
+   - Choose from built-in systems: MSD, Helicopter, or Aircraft
+   - Or select "4. Other" to choose from custom systems in `customized_system.py`
 2. **Parameter Configuration**: Set system parameters and operating conditions
 3. **Workflow Execution**:
-   - Planner Agent determines initial guess and strategy
+   - Planner Agent determines initial guess and strategy (uses physics-based guesses for custom systems)
    - Solver Agent finds equilibrium iteratively
    - Analysis Agent performs linearization and validation
 4. **Results**: View equilibrium points, stability classification, and eigenvalues
 5. **Visualization**: Optionally generate time response plots
+
+### Adding Custom Systems
+
+To add a new system, simply edit `customized_system.py`:
+
+1. Define your dynamics function: `def f_my_system(x, u, params):`
+2. (Optional) Define an initial guess function for better convergence
+3. Add your system to the `systems` dictionary
+4. Run the workflow and select "4. Other" to use your new system
+
+See the detailed guide in `customized_system.py` for step-by-step instructions with examples.
 
 ## Example Output
 
@@ -126,6 +138,7 @@ Generate time response plot? (y/n) [default=y]: y
 agentic-workflow-trimming/
 ├── agentic_workfollow.py    # Main workflow script
 ├── agents.py                # Agent classes and tools
+├── customized_system.py     # Custom system definitions and framework
 ├── requirements.txt         # Python dependencies
 ├── .gitignore              # Git ignore rules
 ├── README.md               # This file
