@@ -1,0 +1,342 @@
+{
+  "system": {
+    "name": "cart_pole",
+    "n_states": 4,
+    "n_inputs": 1,
+    "n_outputs": 4,
+    "state_variables": [
+      "$x_{cart}$",
+      "$\\theta$",
+      "$\\dot{x}_{cart}$",
+      "$\\dot{\\theta}$"
+    ],
+    "input_variables": [
+      "$F$"
+    ],
+    "parameters": {
+      "m_cart": 1.0,
+      "m_pole": 0.1,
+      "l": 0.5,
+      "g": 9.81,
+      "b_cart": 0.1,
+      "b_pole": 0.01
+    }
+  },
+  "equilibrium": {
+    "x_e": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "u_e": [
+      0.0
+    ],
+    "y_e": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "linearized": {
+    "A": [
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ],
+      [
+        0.0,
+        0.8918181818181758,
+        -0.09090909090909091,
+        0.0
+      ],
+      [
+        0.0,
+        -21.58199999999994,
+        0.0,
+        -0.02
+      ]
+    ],
+    "B": [
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.9090909090909091
+      ],
+      [
+        2.0
+      ]
+    ],
+    "C": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "D": [
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ],
+      [
+        0.0
+      ]
+    ]
+  },
+  "stability": {
+    "eigenvalues": [
+      "0.000000",
+      "-0.090909",
+      "-0.010000 + 4.645632j",
+      "-0.010000 + -4.645632j"
+    ],
+    "classification": "marginally stable"
+  },
+  "trace": [
+    {
+      "agent": "PlannerAgent",
+      "action": "plan_trimming_strategy",
+      "decision": {
+        "initial_guess": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "strategy": "least_squares",
+        "reasoning": "Based on cart_pole operating conditions: {'angle': 0.0}"
+      }
+    },
+    {
+      "tool": "solve_equilibrium",
+      "params": {
+        "initial_guess": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "strategy": "least_squares"
+      },
+      "result": {
+        "x_e": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "u_e": [
+          0.0
+        ],
+        "cost": 0.0,
+        "converged": true
+      }
+    },
+    {
+      "agent": "SolverAgent",
+      "action": "convergence_achieved",
+      "attempt": 1,
+      "final_cost": 0.0
+    },
+    {
+      "agent": "AnalysisAgent",
+      "action": "begin_analysis",
+      "equilibrium": {
+        "x_e": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "u_e": [
+          0.0
+        ]
+      }
+    },
+    {
+      "tool": "compute_jacobian",
+      "params": {
+        "equilibrium": {
+          "x_e": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "u_e": [
+            0.0
+          ]
+        },
+        "eps": 1e-07
+      },
+      "result": {
+        "A": [
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          [
+            0.0,
+            0.8918181818181758,
+            -0.09090909090909091,
+            0.0
+          ],
+          [
+            0.0,
+            -21.58199999999994,
+            0.0,
+            -0.02
+          ]
+        ],
+        "B": [
+          [
+            0.0
+          ],
+          [
+            0.0
+          ],
+          [
+            0.9090909090909091
+          ],
+          [
+            2.0
+          ]
+        ],
+        "A_condition_number": Infinity
+      }
+    },
+    {
+      "tool": "analyze_stability",
+      "params": {
+        "A_shape": [
+          4,
+          4
+        ]
+      },
+      "result": {
+        "eigenvalues": [
+          "0.000000",
+          "-0.090909",
+          "-0.010000 + 4.645632j",
+          "-0.010000 + -4.645632j"
+        ],
+        "real_parts": [
+          0.0,
+          -0.09090909090909091,
+          -0.010000000000000002,
+          -0.010000000000000002
+        ],
+        "imaginary_parts": [
+          0.0,
+          0.0,
+          4.6456323573868765,
+          -4.6456323573868765
+        ],
+        "classification": "marginally stable"
+      }
+    },
+    {
+      "tool": "validate_constraints",
+      "params": {
+        "equilibrium": {
+          "x_e": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "u_e": [
+            0.0
+          ]
+        },
+        "bounds": {
+          "x_min": [
+            -10,
+            -3.141592653589793,
+            -10,
+            -10
+          ],
+          "x_max": [
+            10,
+            3.141592653589793,
+            10,
+            10
+          ],
+          "u_min": [
+            -50
+          ],
+          "u_max": [
+            50
+          ]
+        }
+      },
+      "result": {
+        "feasible": true,
+        "x_feasible": true,
+        "u_feasible": true,
+        "violations": []
+      }
+    },
+    {
+      "agent": "AnalysisAgent",
+      "action": "analysis_complete",
+      "summary": {
+        "stability": "marginally stable",
+        "feasible": true
+      }
+    }
+  ],
+  "diagnostics": {
+    "converged": true,
+    "feasible": true,
+    "timestamp": "2025-11-08T18:07:43.868253"
+  }
+}

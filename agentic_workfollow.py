@@ -342,7 +342,7 @@ if __name__ == "__main__":
         plotter = Plotter(config['system_f'], config['params'], x_e, u_e)
         
         # Time span
-        t_span = np.linspace(0, 1000, 1000)
+        t_span = np.linspace(0, 100, 1000)
         
         # Initial condition: perturbed equilibrium
         x0 = x_e + 0.1 * np.random.randn(len(x_e))

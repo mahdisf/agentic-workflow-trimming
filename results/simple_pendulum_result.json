@@ -1,32 +1,32 @@
 {
   "system": {
-    "name": "msd",
+    "name": "simple_pendulum",
     "n_states": 2,
     "n_inputs": 1,
     "n_outputs": 2,
     "state_variables": [
-      "position [m]",
-      "velocity [m/s]"
+      "$\\theta$",
+      "$\\dot{\\theta}$"
     ],
     "input_variables": [
-      "force [N]"
+      "$\\tau$"
     ],
     "parameters": {
       "m": 1.0,
-      "c": 1.0,
-      "k": 1.0
+      "l": 1.0,
+      "g": 9.81
     }
   },
   "equilibrium": {
     "x_e": [
-      1.0,
+      0.0,
       0.0
     ],
     "u_e": [
-      1.0
+      0.0
     ],
     "y_e": [
-      1.0,
+      0.0,
       0.0
     ]
   },
@@ -37,8 +37,8 @@
         1.0
       ],
       [
-        -1.0000000005838672,
-        -0.9999999994736442
+        -9.809999999999983,
+        0.0
       ]
     ],
     "B": [
@@ -46,7 +46,7 @@
         0.0
       ],
       [
-        1.0000000005838672
+        1.0
       ]
     ],
     "C": [
@@ -70,10 +70,10 @@
   },
   "stability": {
     "eigenvalues": [
-      "-0.500000 + 0.866025j",
-      "-0.500000 + -0.866025j"
+      "0.000000 + 3.132092j",
+      "0.000000 + -3.132092j"
     ],
-    "classification": "asymptotically stable"
+    "classification": "marginally stable"
   },
   "trace": [
     {
@@ -81,31 +81,31 @@
       "action": "plan_trimming_strategy",
       "decision": {
         "initial_guess": [
-          1.0,
           0.0,
-          1.0
+          0.0,
+          0.0
         ],
-        "strategy": "minimize",
-        "reasoning": "Based on msd operating conditions: {'desired_force': 1.0}"
+        "strategy": "least_squares",
+        "reasoning": "Based on simple_pendulum operating conditions: {'angle': 0.0}"
       }
     },
     {
       "tool": "solve_equilibrium",
       "params": {
         "initial_guess": [
-          1.0,
           0.0,
-          1.0
+          0.0,
+          0.0
         ],
-        "strategy": "minimize"
+        "strategy": "least_squares"
       },
       "result": {
         "x_e": [
-          1.0,
+          0.0,
           0.0
         ],
         "u_e": [
-          1.0
+          0.0
         ],
         "cost": 0.0,
         "converged": true
@@ -122,11 +122,11 @@
       "action": "begin_analysis",
       "equilibrium": {
         "x_e": [
-          1.0,
+          0.0,
           0.0
         ],
         "u_e": [
-          1.0
+          0.0
         ]
       }
     },
@@ -135,11 +135,11 @@
       "params": {
         "equilibrium": {
           "x_e": [
-            1.0,
+            0.0,
             0.0
           ],
           "u_e": [
-            1.0
+            0.0
           ]
         },
         "eps": 1e-07
@@ -151,8 +151,8 @@
             1.0
           ],
           [
-            -1.0000000005838672,
-            -0.9999999994736442
+            -9.809999999999983,
+            0.0
           ]
         ],
         "B": [
@@ -160,10 +160,10 @@
             0.0
           ],
           [
-            1.0000000005838672
+            1.0
           ]
         ],
-        "A_condition_number": 2.618033986833755
+        "A_condition_number": 9.809999999999985
       }
     },
     {
@@ -176,18 +176,18 @@
       },
       "result": {
         "eigenvalues": [
-          "-0.500000 + 0.866025j",
-          "-0.500000 + -0.866025j"
+          "0.000000 + 3.132092j",
+          "0.000000 + -3.132092j"
         ],
         "real_parts": [
-          -0.4999999997368221,
-          -0.4999999997368221
+          0.0,
+          0.0
         ],
         "imaginary_parts": [
-          0.8660254042734803,
-          -0.8660254042734803
+          3.132091952673162,
+          -3.132091952673162
         ],
-        "classification": "asymptotically stable"
+        "classification": "marginally stable"
       }
     },
     {
@@ -195,27 +195,27 @@
       "params": {
         "equilibrium": {
           "x_e": [
-            1.0,
+            0.0,
             0.0
           ],
           "u_e": [
-            1.0
+            0.0
           ]
         },
         "bounds": {
           "x_min": [
-            -10.0,
-            -10.0
+            -3.141592653589793,
+            -10
           ],
           "x_max": [
-            10.0,
-            10.0
+            3.141592653589793,
+            10
           ],
           "u_min": [
-            0.0
+            -10
           ],
           "u_max": [
-            10.0
+            10
           ]
         }
       },
@@ -230,7 +230,7 @@
       "agent": "AnalysisAgent",
       "action": "analysis_complete",
       "summary": {
-        "stability": "asymptotically stable",
+        "stability": "marginally stable",
         "feasible": true
       }
     }
@@ -238,6 +238,6 @@
   "diagnostics": {
     "converged": true,
     "feasible": true,
-    "timestamp": "2025-11-08T18:04:17.727523"
+    "timestamp": "2025-11-08T18:04:49.699532"
   }
 }
