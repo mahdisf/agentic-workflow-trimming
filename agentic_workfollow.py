@@ -6,116 +6,14 @@ import sys
 import os
 from datetime import datetime
 
-# Import agents and tools
+# Import agents, tools, and system dynamics
 from agents import (
     PlannerAgent, SolverAgent, AnalysisAgent, ParserAgent,
-    solve_equilibrium, compute_jacobian, analyze_stability, validate_constraints
+    solve_equilibrium, compute_jacobian, analyze_stability, validate_constraints,
+    f_msd, f_heli, f_aircraft
 )
 
-# ============================================================================
-# SYSTEM DYNAMICS DEFINITIONS
-# ============================================================================
 
-def f_msd(x, u, params):
-    """
-    Mass-Spring-Damper System
-    States: x = [position, velocity]
-    Input: u = [force]
-    Dynamics: m*x_ddot + c*x_dot + k*x = F
-    """
-    m, c, k = params['m'], params['c'], params['k']
-    pos, vel = x[0], x[1]
-    force = u[0]
-    
-    x_dot = vel
-    x_ddot = (force - c * vel - k * pos) / m
-    
-    return np.array([x_dot, x_ddot])
-
-
-def f_heli(x, u, params):
-    """
-    2-DOF Helicopter System
-    States: x = [theta, psi, dot_theta, dot_psi]
-           (pitch angle, travel angle, pitch rate, travel rate)
-    Inputs: u = [V_p, V_y] (pitch voltage, yaw voltage)
-    """
-    theta, psi, p, r = x
-    V_p, V_y = u
-    
-    J_p = params['J_p']
-    D_p = params['D_p']
-    K_sp = params['K_sp']
-    K_pp = params['K_pp']
-    K_py = params['K_py']
-    J_y = params['J_y']
-    D_y = params['D_y']
-    K_yp = params['K_yp']
-    K_yy = params['K_yy']
-    
-    dot_theta = p
-    dot_psi = r
-    dot_p = (-(K_sp / J_p) * np.sin(theta) - (D_p / J_p) * p + 
-             (K_pp / J_p) * V_p + (K_py / J_p) * V_y)
-    dot_r = (-(D_y / J_y) * r + (K_yp / J_y) * V_p * np.cos(theta) + 
-             (K_yy / J_y) * V_y * np.cos(theta))
-    
-    return np.array([dot_theta, dot_psi, dot_p, dot_r])
-
-
-def f_aircraft(x, u, params):
-    """
-    Aircraft Longitudinal Dynamics
-    States: x = [V, alpha, q, theta]
-           (airspeed, angle of attack, pitch rate, pitch angle)
-    Input: u = [delta_e] (elevator deflection)
-    """
-    V, alpha, q, theta = x
-    delta_e = u[0]
-    
-    # Extract parameters
-    m = params['m']
-    g = params['g']
-    rho = params['rho']
-    S = params['S']
-    c = params['c']
-    I_yy = params['I_yy']
-    T = params['T']
-    
-    # Aerodynamic coefficients
-    C_L0 = params['C_L0']
-    C_Lalpha = params['C_Lalpha']
-    C_Lq = params['C_Lq']
-    C_Ldelta = params['C_Ldelta']
-    C_D0 = params['C_D0']
-    k = params['k']
-    C_m0 = params['C_m0']
-    C_malpha = params['C_malpha']
-    C_mq = params['C_mq']
-    C_mdelta = params['C_mdelta']
-    
-    # Dynamic pressure
-    Q = 0.5 * rho * V**2
-    
-    # Aerodynamic forces and moments
-    C_L = C_L0 + C_Lalpha * alpha + C_Lq * (c / (2 * V)) * q + C_Ldelta * delta_e
-    C_D = C_D0 + k * C_L**2
-    C_m = C_m0 + C_malpha * alpha + C_mq * (c / (2 * V)) * q + C_mdelta * delta_e
-    
-    L = Q * S * C_L
-    D = Q * S * C_D
-    M = Q * S * c * C_m
-    
-    # Flight path angle
-    gamma = theta - alpha
-    
-    # State derivatives
-    dot_V = (T * np.cos(alpha) - D) / m - g * np.sin(gamma)
-    dot_alpha = q - (L + T * np.sin(alpha)) / (m * V) + g * np.cos(gamma) / V
-    dot_q = M / I_yy
-    dot_theta = q
-    
-    return np.array([dot_V, dot_alpha, dot_q, dot_theta])
 
 
 
